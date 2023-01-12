@@ -1,19 +1,43 @@
-package com.teamMMM.bot.events;
+package com.team3m.bot.events;
 
 
+import com.team3m.bot.commands.EditGameSettingsCmd;
+import com.team3m.bot.commands.JoinGameCmd;
+import com.team3m.bot.commands.StartGameCmd;
+import com.team3m.game.managers.GamesManager;
+import com.team3m.game.managers.GuildGamesManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
 import java.util.Objects;
 
 @Component
-
 public class StartEvent extends ListenerAdapter {
+
+
+    @Override
+    public void onGuildReady(@NotNull GuildReadyEvent event) {
+        GamesManager gamesManager = GamesManager.getInstance();
+        gamesManager.getGuildManagers().add(new GuildGamesManager(event.getGuild().getId()));
+
+        //    event.getGuild().upsertCommand((new StartGameCmd()).registerCommandData()).queue();
+
+        (new StartGameCmd()).registerCommandData(event);
+        (new JoinGameCmd()).registerCommandData(event);
+        (new EditGameSettingsCmd()).registerCommandData(event);
+
+    //    event.getGuild().upsertCommand((new StartGameCmd()).registerCommandData()).queue();
+    //    event.getGuild().upsertCommand((new StartGameCmd()).registerCommandData()).queue();
+
+
+    }
 
     @Override
     public void onReady(ReadyEvent event)
